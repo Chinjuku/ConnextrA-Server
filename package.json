@@ -16,6 +16,7 @@
     "@aws-sdk/client-lambda": "^3.682.0",
     "@aws-sdk/client-rds": "^3.682.0",
     "@aws-sdk/client-s3": "^3.682.0",
+    "aws-lambda": "^1.0.7",
     "axios": "^1.7.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -24,7 +25,8 @@
     "jsonwebtoken": "^9.0.2",
     "mysql2": "^3.11.3",
     "nodemon": "^3.1.7",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
