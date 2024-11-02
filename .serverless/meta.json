@@ -1,0 +1,76 @@
+{
+  "C:\\Users\\pprwf\\OneDrive\\Desktop\\Coding\\Connectra-Server": {
+    "versionSfCore": null,
+    "versionFramework": "4.4.7",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeServiceName": null,
+    "servicePath": "C:\\Users\\pprwf\\OneDrive\\Desktop\\Coding\\Connectra-Server",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "connextra-chat",
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs14.x",
+        "environment": {
+          "DB_HOST": "${env:DB_HOST}",
+          "DB_USER": "${env:DB_USER}",
+          "DB_PASSWORD": "<REDACTED>",
+          "DB_NAME": "${env:DB_NAME}",
+          "DB_PORT": "${env:DB_PORT}"
+        }
+      },
+      "functions": {
+        "connect": {
+          "handler": "handler.connect",
+          "events": [
+            {
+              "websocket": {
+                "route": "$connect"
+              }
+            }
+          ]
+        },
+        "disconnect": {
+          "handler": "handler.disconnect",
+          "events": [
+            {
+              "websocket": {
+                "route": "$disconnect"
+              }
+            }
+          ]
+        },
+        "message": {
+          "handler": "handler.message",
+          "events": [
+            {
+              "websocket": {
+                "route": "message"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "serviceRawFile": "service: connextra-chat\r\n\r\nprovider:\r\n  name: aws\r\n  runtime: nodejs14.x\r\n  environment:\r\n    DB_HOST: ${env:DB_HOST}\r\n    DB_USER: ${env:DB_USER}\r\n    DB_PASSWORD: ${env:DB_PASSWORD}\r\n    DB_NAME: ${env:DB_NAME}\r\n    DB_PORT: ${env:DB_PORT}\r\n\r\nfunctions:\r\n  connect:\r\n    handler: handler.connect\r\n    events:\r\n      - websocket:\r\n          route: $connect\r\n  disconnect:\r\n    handler: handler.disconnect\r\n    events:\r\n      - websocket:\r\n          route: $disconnect\r\n  message:\r\n    handler: handler.message\r\n    events:\r\n      - websocket:\r\n          route: message\r\n",
+    "command": [
+      "create"
+    ],
+    "options": {
+      "template": "aws-nodejs-typescript"
+    },
+    "error": {
+      "message": "You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".",
+      "stack": "Error: You must sign in or use a license key with Serverless Framework V.4 and later versions. Please use \"serverless login\".\n    at Authentication.getAuthenticatedData (file:///C:/Users/pprwf/.serverless/releases/4.4.7/package/dist/sf-core.js:686:10535)\n    at async Authentication.resolverAuthenticate (file:///C:/Users/pprwf/.serverless/releases/4.4.7/package/dist/sf-core.js:688:20575)\n    at async _Meta.authenticate (file:///C:/Users/pprwf/.serverless/releases/4.4.7/package/dist/sf-core.js:721:31838)\n    at async _Meta.authenticateAndResolve (file:///C:/Users/pprwf/.serverless/releases/4.4.7/package/dist/sf-core.js:721:31259)\n    at async route (file:///C:/Users/pprwf/.serverless/releases/4.4.7/package/dist/sf-core.js:1011:14685)\n    at async Object.run2 [as run] (file:///C:/Users/pprwf/.serverless/releases/4.4.7/package/dist/sf-core.js:1011:15173)\n    at async run3 (file:///C:/Users/pprwf/.serverless/releases/4.4.7/package/dist/sf-core.js:1011:16435)"
+    },
+    "machineId": "9d4889a833aefe554e39e2c5e729f20a",
+    "stage": "dev",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}
