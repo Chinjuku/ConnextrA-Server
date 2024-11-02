@@ -165,3 +165,27 @@ export const kickMember = async (req: Request, res: Response): Promise<any> => {
     }
 };
 
+export const memberGroup = async (req: Request, res: Response): Promise<any> => {
+    const { groupId } = req.params;
+
+    try {
+        const query = `
+            SELECT gm.*, u.*
+            FROM group_members gm
+            INNER JOIN users u ON gm.user_id = u.id
+            WHERE gm.group_id = $1
+        `;
+        const result = await pool.query(query, [groupId]);
+        
+        // Check if any rows were returned and send the response
+        if (result.rows.length > 0) {
+            res.status(200).json(result.rows);
+        } else {
+            res.status(404).json({ message: "No members found for this group." });
+        }
+
+    } catch (error) {
+        console.error("Error fetching group members:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};

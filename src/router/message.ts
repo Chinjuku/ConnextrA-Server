@@ -1,10 +1,12 @@
+import { getChatRoomMessage } from "@/controller/chat_room";
+import { createMessage } from "@/controller/message";
 import { Router } from "express"
-import { authenticateToken } from "@/middleware/authenticate";
-import { blockFriend, unblockFriend } from "@/controller/block";
 
 const router = Router();
 
-// my account
-// router.get('/messages', getChatRoom);
+// chatroom
+router.get('/chat_room', getChatRoomMessage);
+
+router.post('/create', createMessage);
 
 export default router

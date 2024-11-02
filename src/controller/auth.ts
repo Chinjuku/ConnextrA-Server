@@ -9,7 +9,6 @@ dotenv.config();
 
 export const login = async (req: Request, res: Response) => {
     const { access_token } = req.body;
-    console.log(access_token);
     try {
         // Verify the Google token and fetch user info
         const response = await axios.get(
