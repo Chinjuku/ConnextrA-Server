@@ -6,25 +6,25 @@ interface CustomRequest extends Request {
 }
 
 export const getAccount = async (req: CustomRequest, res: Response) => {
-    console.log(req.user)
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.userId]); // 
+    console.log(req.user);
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [req.user.userId]);
     res.json({ message: "This is a protected route", user: result.rows[0] });
 }
 
 export const editAccount = async (req: CustomRequest, res: Response) => {
-    const { userId } = req.params
-    const { family_name, given_name, country, province, date_of_birth, about_me } = req.body;
+    const { userId } = req.params;
+    const { family_name, given_name, country, province, date_of_birth, about_me, phone } = req.body; // เพิ่ม phone ที่นี่
     try {
         await pool.query(
             `
             UPDATE users
-            SET family_name = $2, given_name = $3, country = $4, province = $5, date_of_birth = $6, about_me = $7
+            SET family_name = $2, given_name = $3, country = $4, province = $5, date_of_birth = $6, about_me = $7, phone = $8
             WHERE id = $1
             `,
-            [userId, family_name, given_name, country, province, date_of_birth, about_me]
+            [userId, family_name, given_name, country, province, date_of_birth, about_me, phone] // เพิ่ม phone ในการส่งค่า
         );
         res.status(203).send('Account edited successfully');
-    } catch (err){
+    } catch (err) {
         console.error('Error editing account:', err);
         res.status(500).send('Internal Server Error');
     }
@@ -35,7 +35,7 @@ export const getAllFriends = async (req: Request, res: Response) => {
     try {
         const result = await pool.query(
             `
-            SELECT *
+            SELECT u.*, u.phone // ดึงข้อมูล phone ด้วย
             FROM users u
             WHERE u.id != $1
             AND u.id IN (
@@ -43,9 +43,9 @@ export const getAllFriends = async (req: Request, res: Response) => {
                 UNION
                 SELECT user_id FROM friends WHERE friend_id = $1
             )
-            `, 
+            `,
             [userId]
-        ); // ทดสอบการดึงข้อมูลจากตาราง users
+        );
         res.send(result.rows);
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -54,12 +54,12 @@ export const getAllFriends = async (req: Request, res: Response) => {
 }
 
 export const getNotFriends = async (req: Request, res: Response) => {
-    const { userId } = req.params; // รับ userId จาก URL parameters
+    const { userId } = req.params;
     console.log(userId);
     try {
         const result = await pool.query(
             `
-            SELECT u.id, u.family_name, u.given_name, u.email, u.image_url
+            SELECT u.id, u.family_name, u.given_name, u.email, u.image_url, u.phone // ดึงข้อมูล phone ด้วย
             FROM users u
             WHERE u.id != $1
             AND u.id NOT IN (
@@ -85,7 +85,6 @@ export const getNotFriends = async (req: Request, res: Response) => {
 export const addFriend = async (req: Request, res: Response) => {
     const { userId, friendId } = req.body;
 
-
     try {
         await pool.query('INSERT INTO friends (user_id, friend_id) VALUES ($1, $2)', [userId, friendId]);
         res.status(201).json({ message: "Friend added successfully", friendId }); // ส่งกลับ friendId หรือข้อมูลที่ต้องการ
@@ -97,6 +96,6 @@ export const addFriend = async (req: Request, res: Response) => {
 
 export const getFriendAccount = async (req: CustomRequest, res: Response) => {
     const { friendId } = req.params;
-    const result = await pool.query('SELECT * FROM users WHERE id = $1', [friendId]); // 
+    const result = await pool.query('SELECT *, phone FROM users WHERE id = $1', [friendId]); // ดึงข้อมูล phone ด้วย
     res.json(result.rows[0]);
 }
