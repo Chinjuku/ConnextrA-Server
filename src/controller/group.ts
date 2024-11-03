@@ -2,8 +2,9 @@ import express, { Request, Response } from "express";
 import pool from "@/db";
 import { console } from "inspector";
 
+
 export const createGroup = async (req: Request, res: Response) => {
-    const { userId, friendIds, group_name } = req.body;
+    const { userId, friendIds = [] }: { userId: string; friendIds: string[]; group_name: string } = req.body;
 
     try {
         // Insert the group and get the group_id
@@ -13,30 +14,30 @@ export const createGroup = async (req: Request, res: Response) => {
             VALUES ($1, $2) 
             RETURNING id
             `,
-            [group_name, userId]
+            [req.body.group_name, userId] // เพิ่มการเข้าถึง group_name จาก req.body
         );
 
         const group_id = result.rows[0].id; // Get the inserted group_id
 
-        if (friendIds && Array.isArray(friendIds)) {
-            friendIds.push(userId)
-            for (const member of friendIds) {
-                await pool.query(
-                    `
-                    INSERT INTO group_members (group_id, user_id) 
-                    VALUES ($1, $2)
-                    `,
-                    [group_id, member]
-                );
-            }
+        // ตรวจสอบว่ามีเพื่อนที่เลือกหรือไม่
+        if (friendIds.length > 0) {
+            // เพิ่ม userId ของผู้สร้างกลุ่มเข้าไปด้วย
+            friendIds.push(userId);
+
+            // ใช้การ query เดียวเพื่อเพิ่มสมาชิกในกลุ่ม
+            const memberValues = friendIds.map(id => `(${group_id}, '${id}')`).join(','); // ใช้ single quotes สำหรับ string
+            await pool.query(
+                `INSERT INTO group_members (group_id, user_id) VALUES ${memberValues}`
+            );
         } else {
+            // ถ้าไม่มีเพื่อนที่เลือกเพียงแค่เพิ่มผู้สร้างกลุ่ม
             await pool.query(
                 `
                 INSERT INTO group_members (group_id, user_id) 
                 VALUES ($1, $2)
                 `,
                 [group_id, userId]
-            )
+            );
         }
 
         res.status(201).json({ message: "Group created successfully", group_id });
@@ -45,6 +46,8 @@ export const createGroup = async (req: Request, res: Response) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
+
 
 export const joinGroup = async (req: Request, res: Response): Promise<any> => {
     const { groupId, userId } = req.params
@@ -219,3 +222,27 @@ export const allGroup = async (req: Request, res: Response) => {
         res.status(500).send("Internal Server Error");
     }
 }
+
+export const getFriendsNotInGroup = async (req: Request, res: Response) => {
+    const { groupId, userId } = req.params;
+
+    try {
+        // ดึงเพื่อนทั้งหมดที่ไม่ได้เป็นสมาชิกในกลุ่ม
+        const result = await pool.query(
+            `
+            SELECT u.id, u.name, u.avatar
+            FROM users u
+            LEFT JOIN group_members gm ON u.id = gm.user_id AND gm.group_id = $1
+            WHERE u.id != $2 AND gm.user_id IS NULL
+            `,
+            [groupId, userId]
+        );
+
+        const friendsNotInGroup = result.rows;
+
+        res.status(200).json(friendsNotInGroup);
+    } catch (error) {
+        console.error("Error fetching friends not in group:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
