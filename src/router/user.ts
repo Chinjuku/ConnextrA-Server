@@ -1,6 +1,6 @@
 import { Router } from "express"
 import { authenticateToken } from "@/middleware/authenticate";
-import { addFriend, editAccount, getAccount, getAllFriends, getFriendAccount, getNotFriends } from "@/controller/user"
+import { addFriend, allUser, editAccount, getAccount, getAllFriends, getFriendAccount, getNotFriends } from "@/controller/user"
 import { blockedFriends, blockFriend, unblockFriend } from "@/controller/block";
 
 const router = Router();
@@ -31,5 +31,7 @@ router.post('/block-friend', blockFriend)
 
 // unblock friend
 router.delete('/unblock/:userId/:friendId', unblockFriend)
+
+router.get('/', allUser)
 
 export default router

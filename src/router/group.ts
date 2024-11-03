@@ -34,6 +34,6 @@ router.delete('/leave/:groupId/:userId', leaveGroup);
 router.delete('/kick-member', kickMember);
 
 // all group for dashboard
-router.delete('/all', allGroup);
+router.get('/all', allGroup);
 
 export default router

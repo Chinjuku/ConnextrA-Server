@@ -99,3 +99,8 @@ export const getFriendAccount = async (req: CustomRequest, res: Response) => {
     const result = await pool.query('SELECT *, phone FROM users WHERE id = $1', [friendId]); 
     res.json(result.rows[0]);
 }
+
+export const allUser = async (req: Request, res: Response) => {
+    const result = await pool.query('SELECT * FROM users');
+    res.json(result.rows);
+}
