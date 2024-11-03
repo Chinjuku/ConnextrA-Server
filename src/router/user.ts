@@ -20,7 +20,7 @@ router.get('/not-friend-yet/:userId', getNotFriends);
 
 
 // add friend
-router.post('/addfriend', addFriend)
+router.post('/addfriend', addFriend);
 
 // block friend
 router.post('/block-friend', blockFriend)
