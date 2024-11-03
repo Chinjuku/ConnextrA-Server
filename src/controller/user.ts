@@ -11,6 +11,25 @@ export const getAccount = async (req: CustomRequest, res: Response) => {
     res.json({ message: "This is a protected route", user: result.rows[0] });
 }
 
+export const editAccount = async (req: CustomRequest, res: Response) => {
+    const { userId } = req.params
+    const { family_name, given_name, country, province, date_of_birth, about_me } = req.body;
+    try {
+        await pool.query(
+            `
+            UPDATE users
+            SET family_name = $2, given_name = $3, country = $4, province = $5, date_of_birth = $6, about_me = $7
+            WHERE id = $1
+            `,
+            [userId, family_name, given_name, country, province, date_of_birth, about_me]
+        );
+        res.status(203).send('Account edited successfully');
+    } catch (err){
+        console.error('Error editing account:', err);
+        res.status(500).send('Internal Server Error');
+    }
+}
+
 export const getAllFriends = async (req: Request, res: Response) => {
     const { userId } = req.body;
     try {
@@ -73,3 +92,4 @@ export const addFriend = async (req: Request, res: Response) => {
         res.status(500).send('Internal Server Error');
     }
 }
+

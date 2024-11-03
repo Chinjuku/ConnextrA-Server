@@ -1,12 +1,15 @@
 import { Router } from "express"
 import { authenticateToken } from "@/middleware/authenticate";
-import { addFriend, getAccount, getAllFriends, getNotFriends } from "@/controller/user"
+import { addFriend, editAccount, getAccount, getAllFriends, getNotFriends } from "@/controller/user"
 import { blockFriend, unblockFriend } from "@/controller/block";
 
 const router = Router();
 
 // my account
 router.get('/protected-route', authenticateToken, getAccount);
+
+// edit account
+router.put('/edit/:userId', editAccount);
 
 // all friends
 router.get('/all-friends', getAllFriends)
