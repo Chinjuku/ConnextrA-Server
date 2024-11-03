@@ -1,6 +1,31 @@
 import express, { Express, Request, Response } from "express";
 import pool from "@/db";
 
+export const blockedFriends = async (req: Request, res: Response): Promise<any> => {
+    const { userId } = req.params;
+    console.log(userId);
+
+    try {
+        const result = await pool.query(
+            `
+            SELECT *
+            FROM users u
+            WHERE u.id != $1
+            AND u.id IN (
+                SELECT friend_id FROM blocks WHERE user_id = $1
+                UNION
+                SELECT user_id FROM blocks WHERE friend_id = $1
+            )
+            `,
+            [userId]
+        );
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("Error finding groups:", error);
+        res.status(500).send("Internal Server Error");
+    }
+}
+
 export const blockFriend = async (req: Request, res: Response): Promise<any> => {
     const { userId, friendId } = req.body;
     try {
@@ -36,7 +61,7 @@ export const blockFriend = async (req: Request, res: Response): Promise<any> => 
 }
 
 export const unblockFriend = async (req: Request, res: Response): Promise<any> => {
-    const { userId, friendId } = req.body;
+    const { userId, friendId } = req.params;
     try {
         // Delete friend connection
         await pool.query(`

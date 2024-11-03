@@ -95,3 +95,8 @@ export const addFriend = async (req: Request, res: Response) => {
     }
 };
 
+export const getFriendAccount = async (req: CustomRequest, res: Response) => {
+    const { friendId } = req.params;
+    const result = await pool.query('SELECT * FROM users WHERE id = $1', [friendId]); // 
+    res.json(result.rows[0]);
+}
