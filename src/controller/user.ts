@@ -59,7 +59,7 @@ export const getNotFriends = async (req: Request, res: Response) => {
     try {
         const result = await pool.query(
             `
-            SELECT u.id, u.family_name, u.given_name, u.email
+            SELECT u.id, u.family_name, u.given_name, u.email, u.image_url
             FROM users u
             WHERE u.id != $1
             AND u.id NOT IN (
