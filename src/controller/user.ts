@@ -54,8 +54,8 @@ export const getAllFriends = async (req: Request, res: Response) => {
 }
 
 export const getNotFriends = async (req: Request, res: Response) => {
-    const { userId } = req.body;
-    console.log(userId)
+    const { userId } = req.params; // รับ userId จาก URL parameters
+    console.log(userId);
     try {
         const result = await pool.query(
             `

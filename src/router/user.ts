@@ -14,8 +14,10 @@ router.put('/edit/:userId', editAccount);
 // all friends
 router.get('/all-friends', getAllFriends)
 
-// find friends
-router.get('/not-friend-yet', getNotFriends);
+// ในไฟล์ routes ของคุณ
+router.get('/not-friend-yet/:userId', getNotFriends);
+
+
 
 // add friend
 router.post('/addfriend', addFriend)
