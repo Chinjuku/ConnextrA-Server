@@ -35,7 +35,7 @@ export const getAllFriends = async (req: Request, res: Response) => {
     try {
         const result = await pool.query(
             `
-            SELECT u.*, u.phone // ดึงข้อมูล phone ด้วย
+            SELECT u.*, u.phone
             FROM users u
             WHERE u.id != $1
             AND u.id IN (
@@ -59,7 +59,7 @@ export const getNotFriends = async (req: Request, res: Response) => {
     try {
         const result = await pool.query(
             `
-            SELECT u.id, u.family_name, u.given_name, u.email, u.image_url, u.phone // ดึงข้อมูล phone ด้วย
+            SELECT u.id, u.family_name, u.given_name, u.email, u.image_url, u.phone
             FROM users u
             WHERE u.id != $1
             AND u.id NOT IN (
@@ -96,6 +96,6 @@ export const addFriend = async (req: Request, res: Response) => {
 
 export const getFriendAccount = async (req: CustomRequest, res: Response) => {
     const { friendId } = req.params;
-    const result = await pool.query('SELECT *, phone FROM users WHERE id = $1', [friendId]); // ดึงข้อมูล phone ด้วย
+    const result = await pool.query('SELECT *, phone FROM users WHERE id = $1', [friendId]); 
     res.json(result.rows[0]);
 }
