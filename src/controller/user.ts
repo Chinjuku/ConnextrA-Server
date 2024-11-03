@@ -54,12 +54,12 @@ export const getAllFriends = async (req: Request, res: Response) => {
 }
 
 export const getNotFriends = async (req: Request, res: Response) => {
-    const { userId } = req.body;
-    console.log(userId)
+    const { userId } = req.params; // รับ userId จาก URL parameters
+    console.log(userId);
     try {
         const result = await pool.query(
             `
-            SELECT u.id, u.family_name, u.given_name, u.email
+            SELECT u.id, u.family_name, u.given_name, u.email, u.image_url
             FROM users u
             WHERE u.id != $1
             AND u.id NOT IN (
@@ -84,12 +84,14 @@ export const getNotFriends = async (req: Request, res: Response) => {
 
 export const addFriend = async (req: Request, res: Response) => {
     const { userId, friendId } = req.body;
+
+
     try {
         await pool.query('INSERT INTO friends (user_id, friend_id) VALUES ($1, $2)', [userId, friendId]);
-        res.status(201).json({ message: "Friend added successfully" });
+        res.status(201).json({ message: "Friend added successfully", friendId }); // ส่งกลับ friendId หรือข้อมูลที่ต้องการ
     } catch (error) {
         console.error('Error adding friend:', error);
         res.status(500).send('Internal Server Error');
     }
-}
+};
 
