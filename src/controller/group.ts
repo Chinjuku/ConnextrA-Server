@@ -74,22 +74,21 @@ export const joinGroup = async (req: Request, res: Response): Promise<any> => {
 
 export const findGroup = async (req: Request, res: Response) => {
     const { userId } = req.params;
+    const searchQuery = req.query.q || ''; // รับค่าค้นหาจาก query params
 
     try {
         const result = await pool.query(
             `
             SELECT g.* 
             FROM groups g
-            JOIN group_members gm ON g.id = gm.group_id
-            WHERE gm.group_id IN (
-                SELECT group_id FROM group_members
-            ) 
-            AND gm.group_id NOT IN (
-                SELECT group_id FROM group_members WHERE user_id = $1
+            WHERE NOT EXISTS (
+                SELECT 1
+                FROM group_members gm
+                WHERE gm.group_id = g.id AND gm.user_id = $1
             )
-            GROUP BY g.id
+            AND g.name ILIKE '%' || $2 || '%'  -- ค้นหาตามชื่อกลุ่ม
             `,
-            [userId]
+            [userId, searchQuery]
         );
 
         res.status(200).json(result.rows);
@@ -98,6 +97,7 @@ export const findGroup = async (req: Request, res: Response) => {
         res.status(500).send("Internal Server Error");
     }
 };
+
 
 export const myGroup = async (req: Request, res: Response) => {
     const { userId } = req.params;
