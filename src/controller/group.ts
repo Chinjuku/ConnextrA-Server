@@ -212,6 +212,7 @@ export const memberGroup = async (req: Request, res: Response): Promise<any> => 
 export const allGroup = async (req: Request, res: Response) => {
     try {
         const result = await pool.query(`SELECT * FROM groups`)
+        console.log(result.rows)
         res.status(200).json(result.rows);
     } catch (error) {
         console.error("Error fetching group", error);
