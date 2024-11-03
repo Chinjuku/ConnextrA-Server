@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import pool from "@/db";
+import { console } from "inspector";
 
 export const createGroup = async (req: Request, res: Response) => {
     const { userId, friendIds, group_name } = req.body;
@@ -110,6 +111,24 @@ export const myGroup = async (req: Request, res: Response) => {
             WHERE gm.user_id = $1
             `,
             [userId]
+        );
+
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("Error finding groups:", error);
+        res.status(500).send("Internal Server Error");
+    }
+};
+
+export const selectGroup = async (req: Request, res: Response) => {
+    const { groupId } = req.params;
+    console.log(groupId);
+    try {
+        const result = await pool.query(
+            `
+            SELECT * FROM groups WHERE id = $1
+            `,
+            [groupId]
         );
 
         res.status(200).json(result.rows);

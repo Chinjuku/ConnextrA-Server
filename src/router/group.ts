@@ -1,4 +1,10 @@
-import { allGroup, createGroup, findGroup, joinGroup, kickMember, leaveGroup, memberGroup, myGroup } from "@/controller/group";
+import { 
+    allGroup, createGroup, 
+    findGroup, joinGroup, 
+    kickMember, leaveGroup, 
+    memberGroup, myGroup, 
+    selectGroup 
+    } from "@/controller/group";
 import { Router } from "express"
 
 const router = Router();
@@ -17,6 +23,9 @@ router.get('/member/:groupId', memberGroup);
 
 // my group
 router.get('/:userId', myGroup);
+
+// show select group
+router.get('/:groupId', selectGroup);
 
 // leave group
 router.delete('/leave/:groupId/:userId', leaveGroup);
