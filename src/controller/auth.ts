@@ -27,8 +27,8 @@ export const login = async (req: Request, res: Response) => {
         if (userResult.rows.length === 0) {
             // New user, insert into the database
             const newUser = await pool.query(
-                'INSERT INTO users (email, family_name, given_name, image_url, google_id) VALUES ($1, $2, $3, $4, $5) RETURNING id',
-                [email, family_name, given_name, picture, id]
+                'INSERT INTO users (email, family_name, given_name, image_url, google_id, role) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+                [email, family_name, given_name, picture, id, "user"]
             );
             userData = newUser.rows[0];
         } else {

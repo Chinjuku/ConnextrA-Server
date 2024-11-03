@@ -3,7 +3,7 @@ import {
     findGroup, joinGroup, 
     kickMember, leaveGroup, 
     memberGroup, myGroup, 
-    selectGroup 
+    selectGroup, getFriendsNotInGroup
     } from "@/controller/group";
 import { Router } from "express"
 
@@ -34,6 +34,9 @@ router.delete('/leave/:groupId/:userId', leaveGroup);
 router.delete('/kick-member', kickMember);
 
 // all group for dashboard
-router.get('/all', allGroup);
+router.get('/', allGroup);
+
+// friend not in group
+router.get('/friends-not-in-group/:groupId/:userId', getFriendsNotInGroup);
 
 export default router
