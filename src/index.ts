@@ -8,6 +8,7 @@ import userRoute from "@/router/user";
 import groupRoute from "@/router/group";
 import messageRoute from "@/router/message";
 import noteRoute from "@/router/note";
+import { saveMessageToDynamoDB } from "@/dynamo";
 import cors from "cors";
 
 dotenv.config();
@@ -44,8 +45,10 @@ app.listen(port, () => {
 io.on("connection", (socket) => {
     console.log("A user connected");
 
-    socket.on("send_message", (message) => {
+    socket.on("send_message", async (message) => {
         console.log("Message received:", message);
+        const { senderId, content, receiverId = null, groupId = null, image_url = null } = message;
+        await saveMessageToDynamoDB(senderId, receiverId, groupId, content, image_url);
         io.emit("receive_message", message); // Broadcast to all connected clients
     });
 
