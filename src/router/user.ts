@@ -12,7 +12,7 @@ router.get('/protected-route', authenticateToken, getAccount);
 router.put('/edit/:userId', editAccount);
 
 // all friends
-router.get('/all-friends', getAllFriends)
+router.get('/all-friends/:userId', getAllFriends)
 
 // find friends
 router.get('/not-friend-yet', getNotFriends);

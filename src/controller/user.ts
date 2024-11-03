@@ -31,11 +31,11 @@ export const editAccount = async (req: CustomRequest, res: Response) => {
 }
 
 export const getAllFriends = async (req: Request, res: Response) => {
-    const { userId } = req.body;
+    const { userId } = req.params;
     try {
         const result = await pool.query(
             `
-            SELECT u.id, u.family_name, u.given_name, u.email
+            SELECT *
             FROM users u
             WHERE u.id != $1
             AND u.id IN (
