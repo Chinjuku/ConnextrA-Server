@@ -5,6 +5,7 @@ import authRoute from '@/router/auth';
 import userRoute from '@/router/user';
 import groupRoute from '@/router/group';
 import messageRoute from '@/router/message';
+import noteRoute from '@/router/note';
 import cors from "cors"
 
 dotenv.config();
@@ -21,6 +22,8 @@ app.use("/auth", authRoute);
 app.use("/group", groupRoute);
 // message
 app.use("/message", messageRoute);
+// note
+app.use("/note", noteRoute);
 
 app.listen(port, () => {
     console.log(`[server]: Server is running at http://localhost:${port}`);
