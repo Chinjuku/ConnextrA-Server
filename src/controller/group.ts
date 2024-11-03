@@ -189,3 +189,13 @@ export const memberGroup = async (req: Request, res: Response): Promise<any> => 
         res.status(500).send("Internal Server Error");
     }
 };
+
+export const allGroup = async (req: Request, res: Response) => {
+    try {
+        const result = await pool.query(`SELECT * FROM groups`)
+        res.status(200).json(result.rows);
+    } catch (error) {
+        console.error("Error fetching group", error);
+        res.status(500).send("Internal Server Error");
+    }
+}

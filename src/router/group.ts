@@ -1,4 +1,4 @@
-import { createGroup, findGroup, joinGroup, kickMember, leaveGroup, memberGroup, myGroup } from "@/controller/group";
+import { allGroup, createGroup, findGroup, joinGroup, kickMember, leaveGroup, memberGroup, myGroup } from "@/controller/group";
 import { Router } from "express"
 
 const router = Router();
@@ -23,5 +23,8 @@ router.delete('/leave/:groupId/:userId', leaveGroup);
 
 // kick member
 router.delete('/kick-member', kickMember);
+
+// all group for dashboard
+router.delete('/all', allGroup);
 
 export default router
