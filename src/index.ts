@@ -44,7 +44,7 @@ app.listen(port, () => {
 io.on("connection", (socket) => {
     console.log("A user connected");
 
-    socket.on("send_message", async (data) => {
+    socket.on("send_message", async (data, friendId, groupId) => {
         console.log("Message received:", data);
         const { message } = data;
         const { sender, recipient, content, id } = message;
@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
             return;
         }
 
-        await saveMessageToDynamoDB(sender.id, content, recipient.id || null, null, null);
+        await saveMessageToDynamoDB(sender.id, content, friendId || null, groupId || null, null);
         io.emit("receive_message", { message }); // Broadcast to all connected clients
     });
 
