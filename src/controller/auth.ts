@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express"; // ตรวจสอบให้แน่ใจว่ามีการนำเข้า
 import dotenv from "dotenv";
-import pool from "@/db";
+import pool from "@/db/rds";
 import { generateAccessToken, generateRefreshToken } from "@/lib/generate_token";
 import axios from "axios";
 import jwt from "jsonwebtoken"

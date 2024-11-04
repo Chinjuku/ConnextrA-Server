@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import pool from "@/db"; 
+import pool from "@/db/rds"; 
 
 
 export const createNote = async (req: Request, res: Response) => {

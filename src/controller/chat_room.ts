@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from "express";
-import pool from "@/db";
+import pool from "@/db/rds";
 
 export const getChatRoomMessage = async (req: Request, res: Response): Promise<any> => {
     const { userId, friendId, groupId } = req.body;

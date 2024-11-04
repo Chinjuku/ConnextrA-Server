@@ -1,12 +1,12 @@
 import express, { Express, Request, Response } from "express";
-import pool from "@/db";
+import pool from "@/db/rds";
 
-export const createMessage = async (req: Request, res: Response): Promise<any> => {
+export const createMessage = async (req: Request, res: Response) => {
     const { senderId, receiverId, content, groupId } = req.body;
     try {
         // Validate input
         if (!senderId || (!receiverId && !groupId) || !content) {
-            return res.status(400).json({ message: "Missing required fields." });
+            res.status(400).json({ message: "Missing required fields." });
         }
 
         // Insert a new message into the messages table
@@ -23,7 +23,7 @@ export const createMessage = async (req: Request, res: Response): Promise<any> =
 
             // Check if friend relationship exists
             if (getFriend.rows.length === 0) {
-                return res.status(404).json({ message: "Friend relationship not found." });
+                res.status(404).json({ message: "Friend relationship not found." });
             }
 
             const result = await pool.query(

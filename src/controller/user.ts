@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from "express";
-import pool from "@/db";
+import pool from "@/db/rds";
 
 interface CustomRequest extends Request {
     user?: any; // หรือระบุ type ที่เหมาะสมกับข้อมูลของคุณ
@@ -96,7 +96,7 @@ export const addFriend = async (req: Request, res: Response) => {
 
 export const getFriendAccount = async (req: CustomRequest, res: Response) => {
     const { friendId } = req.params;
-    const result = await pool.query('SELECT *, phone FROM users WHERE id = $1', [friendId]); 
+    const result = await pool.query('SELECT *, phone FROM users WHERE id = $1', [friendId]);
     res.json(result.rows[0]);
 }
 
