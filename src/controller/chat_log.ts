@@ -1,9 +1,9 @@
-import { Request, Response } from "express"
+import { Request, Response } from "express";
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import dynamoDB from "@/dynamo";
 
-export const getChatLog = async (req: Request, res: Response) => {
-    const { userId, friendId, groupId } = req.query;
+export const getChatLog = async (req: Request, res: Response): Promise<any> => {
+    const { userId, friendId, groupId } = req.body;
 
     try {
         let params;
@@ -11,6 +11,7 @@ export const getChatLog = async (req: Request, res: Response) => {
         if (friendId) {
             params = {
                 TableName: "Messages",
+                IndexName: "senderReceiverIndex",
                 KeyConditionExpression: "senderId = :userId AND receiverId = :friendId",
                 ExpressionAttributeValues: {
                     ":userId": userId,
@@ -22,6 +23,7 @@ export const getChatLog = async (req: Request, res: Response) => {
         else if (groupId) {
             params = {
                 TableName: "Messages",
+                IndexName: "groupIndex",
                 KeyConditionExpression: "groupId = :groupId",
                 ExpressionAttributeValues: {
                     ":groupId": groupId,
@@ -34,6 +36,8 @@ export const getChatLog = async (req: Request, res: Response) => {
 
         const command = new QueryCommand(params);
         const data = await dynamoDB.send(command);
+
+        console.log("Test retrieving message: ", data)
 
         if (data.Items && data.Items.length > 0) {
             res.json(data.Items);
