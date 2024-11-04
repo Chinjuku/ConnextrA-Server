@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "start": "ts-node -r tsconfig-paths/register src/index.ts",
-    "dev": "concurrently \"nodemon -r tsconfig-paths/register src/index.ts\"",
+    "dev": "concurrently \"nodemon -r tsconfig-paths/register src/index.ts\" \"ts-node -r tsconfig-paths/register src/controller/socket.ts\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
