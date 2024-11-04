@@ -11,7 +11,6 @@ export const getChatLog = async (req: Request, res: Response) => {
         if (friendId) {
             params = {
                 TableName: "Messages",
-                IndexName: "ChatIndex",
                 KeyConditionExpression: "senderId = :userId AND receiverId = :friendId",
                 ExpressionAttributeValues: {
                     ":userId": userId,
