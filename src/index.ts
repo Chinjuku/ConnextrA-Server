@@ -1,4 +1,3 @@
-// RUN SERVER --> npm run start OR npm start
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import { Server } from "socket.io";
@@ -45,11 +44,19 @@ app.listen(port, () => {
 io.on("connection", (socket) => {
     console.log("A user connected");
 
-    socket.on("send_message", async (message) => {
-        console.log("Message received:", message);
-        const { content, sender, recipient } = message;
+    socket.on("send_message", async (data) => {
+        console.log("Message received:", data);
+        const { message } = data;
+        const { sender, recipient, content, id } = message;
+
+        // Check if message structure is correct
+        if (!sender || !recipient || !content || !id) {
+            console.error("Invalid message structure:", message);
+            return;
+        }
+
         await saveMessageToDynamoDB(sender.id, content, recipient.id || null, null, null);
-        io.emit("receive_message", message); // Broadcast to all connected clients
+        io.emit("receive_message", { message }); // Broadcast to all connected clients
     });
 
     socket.on("disconnect", () => {
