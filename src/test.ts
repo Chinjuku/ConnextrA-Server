@@ -66,6 +66,7 @@ interface MessageBody {
   sender_id: string;
   sender_name: string;
   msg: string;
+  receiver_id: string;
 }
 
 const on_message = async (
@@ -80,37 +81,39 @@ const on_message = async (
       body = JSON.parse(body) as MessageBody;
     }
 
-    const { sender_id, sender_name, msg } = body;
+    const { sender_id, sender_name, msg, receiver_id } = body;
 
+    // Query for the receiver's connection ID using their user ID (receiver_id)
     const scanCommandInput: ScanCommandInput = {
       TableName: "Customers",
+      FilterExpression: "Uid = :receiverId",
+      ExpressionAttributeValues: {
+        ":receiverId": { S: receiver_id },
+      },
     };
     const scanCommand = new ScanCommand(scanCommandInput);
     const res: ScanCommandOutput = await client.send(scanCommand);
 
     if (res.Items && res.Items.length) {
-      await Promise.all(
-        res.Items.map(async (obj) => {
-          try {
-            const clientApi = new ApiGatewayManagementApiClient({
-              endpoint: callbackUrl,
-            });
+      // There should be one match in the Items array if the receiver is connected
+      const receiverConnectionId = res.Items[0].Id.S as string;
 
-            const requestParams: PostToConnectionCommandInput = {
-              ConnectionId: obj.Id.S as string,
-              Data: JSON.stringify({
-                sender_name,
-                sender_id,
-                msg,
-              }),
-            };
-            const postCommand = new PostToConnectionCommand(requestParams);
-            await clientApi.send(postCommand);
-          } catch (e) {
-            console.error("Error sending message to connection", e);
-          }
-        })
-      );
+      const clientApi = new ApiGatewayManagementApiClient({
+        endpoint: callbackUrl,
+      });
+
+      const requestParams: PostToConnectionCommandInput = {
+        ConnectionId: receiverConnectionId,
+        Data: JSON.stringify({
+          sender_name,
+          sender_id,
+          msg,
+        }),
+      };
+      const postCommand = new PostToConnectionCommand(requestParams);
+      await clientApi.send(postCommand);
+    } else {
+      console.error("Receiver not connected or not found");
     }
   } catch (e) {
     console.error("Error in on_message", e);
