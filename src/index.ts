@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
             return;
         }
 
-        await saveMessageToDynamoDB(sender.id, content, friendId || null, groupId || null, null);
+        await saveMessageToDynamoDB(sender.id, content, friendId || null, message.groupId || null, null);
         io.emit("receive_message", { message }); // Broadcast to all connected clients
     });
 
