@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import pool from "@/db"; // Make sure to import your database connection
+import pool from "@/db/rds"; 
+
 
 // Create a new note
 export const createNote = async (req: Request, res: Response) => {

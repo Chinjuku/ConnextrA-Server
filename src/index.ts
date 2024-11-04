@@ -7,7 +7,7 @@ import userRoute from "@/router/user";
 import groupRoute from "@/router/group";
 import messageRoute from "@/router/message";
 import noteRoute from "@/router/note";
-import { saveMessageToDynamoDB } from "@/dynamo";
+import { saveMessageToDynamoDB } from "@/db/dynamo";
 import cors from "cors";
 
 dotenv.config();

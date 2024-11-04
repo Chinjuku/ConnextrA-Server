@@ -1,5 +1,5 @@
 import express, { Express, Request, Response } from "express";
-import pool from "@/db";
+import pool from "@/db/rds";
 
 export const blockedFriends = async (req: Request, res: Response): Promise<any> => {
     const { userId } = req.params;
