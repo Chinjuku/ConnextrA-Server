@@ -37,6 +37,8 @@ export const getChatLog = async (req: Request, res: Response): Promise<any> => {
         const command = new QueryCommand(params);
         const data = await dynamoDB.send(command);
 
+        console.log("Test retrieving message: ", data)
+
         if (data.Items && data.Items.length > 0) {
             res.json(data.Items);
         } else {
