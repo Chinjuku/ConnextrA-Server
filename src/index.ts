@@ -44,10 +44,10 @@ app.listen(port, () => {
 io.on("connection", (socket) => {
     console.log("A user connected");
 
-    socket.on("send_message", async (data, friendId, groupId) => {
+    socket.on("send_message", async (data, friendId) => {
         console.log("Message received:", data);
         const { message } = data;
-        const { sender, recipient, content, id } = message;
+        const { sender, recipient, groupId, content, id } = message;
 
         // Check if message structure is correct
         if (!sender || !recipient || !content || !id) {

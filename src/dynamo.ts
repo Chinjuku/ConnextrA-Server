@@ -45,9 +45,12 @@ export async function saveMessageToDynamoDB(
         case groupId !== null:
             item.groupId = groupId;
             break;
-        default:
+        case receiverId !== null:
             item.receiverId = receiverId;
             break;
+        default:
+            console.error("Both groupId and receiverId cannot be null");
+            return;
     }
 
     if (image_url) {
