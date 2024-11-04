@@ -5,6 +5,14 @@ import dynamoDB from "@/dynamo";
 export const getChatLog = async (req: Request, res: Response): Promise<any> => {
     const { userId, friendId, groupId } = req.body;
 
+    const userIdStr = String(userId);
+    const friendIdStr = friendId ? String(friendId) : undefined;
+    const groupIdStr = groupId ? String(groupId) : undefined;
+
+    console.log("userId:", typeof userIdStr, userIdStr);
+    console.log("friendId:", typeof friendIdStr, friendIdStr);
+    console.log("groupId:", typeof groupIdStr, groupIdStr);
+
     try {
         let params;
 
@@ -14,8 +22,8 @@ export const getChatLog = async (req: Request, res: Response): Promise<any> => {
                 IndexName: "senderReceiverIndex",
                 KeyConditionExpression: "senderId = :userId AND receiverId = :friendId",
                 ExpressionAttributeValues: {
-                    ":userId": userId,
-                    ":friendId": friendId,
+                    ":userId": userIdStr,
+                    ":friendId": friendIdStr,
                 },
                 ScanIndexForward: true, // sort by timestamp
             };
@@ -26,7 +34,7 @@ export const getChatLog = async (req: Request, res: Response): Promise<any> => {
                 IndexName: "groupIndex",
                 KeyConditionExpression: "groupId = :groupId",
                 ExpressionAttributeValues: {
-                    ":groupId": groupId,
+                    ":groupId": groupIdStr,
                 },
                 ScanIndexForward: true,
             };

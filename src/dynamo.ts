@@ -31,7 +31,8 @@ export async function saveMessageToDynamoDB(
     content: string,
     receiverId: string | null = null,
     groupId: string | null = null,
-    image_url: string | null = null): Promise<void> {
+    image_url: string | null = null
+): Promise<void> {
     const messageId = uuidv4();
     const timestamp = Date.now();
     const item: any = {
@@ -41,19 +42,11 @@ export async function saveMessageToDynamoDB(
         timestamp
     }
 
-    switch (true) {
-        case groupId !== null:
-            item.groupId = groupId;
-            break;
-        case receiverId !== null:
-            item.receiverId = receiverId;
-            break;
-        default:
-            console.error("Both groupId and receiverId cannot be null");
-            return;
-    }
-
-    if (image_url) {
+    if (groupId) {
+        item.groupId = groupId;
+    } else if (receiverId) {
+        item.receiverId = receiverId;
+    } else if (image_url) {
         item.image_url = image_url;
     }
 

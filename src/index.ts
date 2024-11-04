@@ -44,18 +44,23 @@ app.listen(port, () => {
 io.on("connection", (socket) => {
     console.log("A user connected");
 
-    socket.on("send_message", async (data, friendId) => {
+    socket.on("send_message", async (data) => {
         console.log("Message received:", data);
-        const { message } = data;
+        const { message, friendId } = data;
         const { sender, recipient, groupId, content, id } = message;
-
+        let group_id
         // Check if message structure is correct
         if (!sender || !recipient || !content || !id) {
             console.error("Invalid message structure:", message);
             return;
         }
+        group_id = String(message.groupId)
+        if (message.groupId === 0) {
+            group_id = null
+        }
+        console.log(String(friendId), group_id)
 
-        await saveMessageToDynamoDB(sender.id, content, friendId || null, message.groupId || null, null);
+        await saveMessageToDynamoDB(String(sender.id), content, String(friendId) || null, group_id || null, null);
         io.emit("receive_message", { message }); // Broadcast to all connected clients
     });
 
