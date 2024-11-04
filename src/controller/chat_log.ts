@@ -1,9 +1,9 @@
-import { Request, Response } from "express"
+import { Request, Response } from "express";
 import { QueryCommand } from "@aws-sdk/lib-dynamodb";
 import dynamoDB from "@/dynamo";
 
-export const getChatLog = async (req: Request, res: Response) => {
-    const { userId, friendId, groupId } = req.query;
+export const getChatLog = async (req: Request, res: Response): Promise<any> => {
+    const { userId, friendId, groupId } = req.body;
 
     try {
         let params;
