@@ -25,7 +25,7 @@ router.get('/member/:groupId', memberGroup);
 router.get('/:userId', myGroup);
 
 // show select group
-router.get('/:groupId', selectGroup);
+router.get('/select/:groupId', selectGroup);
 
 // leave group
 router.delete('/leave/:groupId/:userId', leaveGroup);

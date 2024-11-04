@@ -125,19 +125,21 @@ export const myGroup = async (req: Request, res: Response) => {
 
 export const selectGroup = async (req: Request, res: Response) => {
     const { groupId } = req.params;
-    console.log(groupId);
+
     try {
         const result = await pool.query(
-            `
-            SELECT * FROM groups WHERE id = $1
-            `,
+            `SELECT * FROM groups WHERE id = $1`,
             [groupId]
         );
 
-        res.status(200).json(result.rows);
+        if (result.rows.length === 0) {
+            res.status(404).json({ message: "Group not found" });
+        }
+
+        res.status(200).json(result.rows[0]);
     } catch (error) {
-        console.error("Error finding groups:", error);
-        res.status(500).send("Internal Server Error");
+        console.error("Error finding group:", error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
 };
 
