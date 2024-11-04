@@ -34,23 +34,34 @@ export async function saveMessageToDynamoDB(
     image_url: string | null = null): Promise<void> {
     const messageId = uuidv4();
     const timestamp = Date.now();
+    const item: any = {
+        messageId,
+        senderId,
+        content,
+        timestamp
+    }
+
+    switch (true) {
+        case groupId !== null:
+            item.groupId = groupId;
+            break;
+        default:
+            item.receiverId = receiverId;
+            break;
+    }
+
+    if (image_url) {
+        item.image_url = image_url;
+    }
 
     const command = new PutCommand({
         TableName: "Messages",
-        Item: {
-            messageId,
-            senderId,
-            receiverId,
-            groupId,
-            content,
-            image_url,
-            timestamp,
-        },
+        Item: item
     });
 
     try {
         await dynamoDB.send(command);
-        console.log("Message saved to DynamoDB:", { messageId, senderId, receiverId, groupId, content, image_url, timestamp });
+        console.log("Message saved to DynamoDB:", item);
     } catch (error) {
         console.error("Failed to save message to DynamoDB:", error);
     }
