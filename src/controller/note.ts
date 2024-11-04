@@ -1,47 +1,55 @@
 import { Request, Response } from "express";
-import pool from "@/db"; 
+import pool from "@/db"; // Make sure to import your database connection
 
-
+// Create a new note
 export const createNote = async (req: Request, res: Response) => {
-    const { content, creator, viewer, group_id } = req.body; // รับข้อมูลจาก req.body
-
-    const created_at = new Date(); 
-    const updated_at = new Date(); 
+    const { title, content, image, friendId, userId } = req.body; // Include userId from the request body
 
     try {
+        // Insert the new note into the database
         const result = await pool.query(
-            `INSERT INTO notes (content, created_at, updated_at, creator, viewer, group_id)
+            `INSERT INTO notes (title, content, image, friend_id, user_id, timestamp) 
              VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-            [content, created_at, updated_at, creator, viewer, group_id]
+            [title, content, image || null, friendId, userId, new Date()]
         );
 
-        res.status(201).json(result.rows[0]); 
+        const newNote = result.rows[0];
+        res.status(201).json(newNote);
     } catch (error) {
-        console.error('Error creating note:', error);
-        res.status(500).send('Internal Server Error');
+        console.error('Error saving note:', error);
+        res.status(500).json({ error: 'Failed to save the note.' });
     }
 };
 
-
-export const getNoteById = async (req: Request, res: Response): Promise<void> => {
-    const { note_id } = req.params; 
+// Retrieve notes for a specific user and their friends
+export const getNotesByUserAndFriend = async (req: Request, res: Response) => {
+    const { userId } = req.params; // User ID from the URL parameter
 
     try {
+        // Fetch notes for the user and their friends
         const result = await pool.query(
-            `SELECT id, content, created_at, updated_at, creator, viewer, group_id 
-             FROM notes WHERE id = $1`, 
-            [note_id]
+            `SELECT * FROM notes 
+             WHERE user_id = $1 OR friend_id = $1 
+             ORDER BY timestamp DESC`,
+            [userId]
         );
 
-        if (result.rows.length === 0) {
-            res.status(404).send('Note not found'); 
-            return; 
-        }
-
-        res.status(200).json(result.rows[0]); 
+        const notes = result.rows;
+        res.status(200).json(notes);
     } catch (error) {
-        console.error('Error fetching note:', error);
-        res.status(500).send('Internal Server Error');
+        console.error('Error retrieving notes:', error);
+        res.status(500).json({ error: 'Failed to retrieve notes.' });
     }
 };
 
+export const deleteNoteById = async (req: Request, res: Response) => {
+    const { noteId } = req.params; // รับ noteId จาก URL parameter
+
+    try {
+        await pool.query(`DELETE FROM notes WHERE id = $1`, [noteId]);
+        res.status(204).send(); // ส่งสถานะ 204 No Content
+    } catch (error) {
+        console.error('Error deleting note:', error);
+        res.status(500).json({ error: 'Failed to delete note.' });
+    }
+};
